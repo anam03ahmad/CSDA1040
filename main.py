@@ -10,7 +10,7 @@ if choice == 'Home':
     st.title('CSDA 1040 Group 2:')
     st.title('Spam Detection Model')
     st.header(
-        "In this project, our model determines if an sms is spam or not. We are using Natual Language Processing and the Multinomial Naive Bayes algorithm." +
+        "In this project, our model determines if an sms is spam or not." +
         "We used the ham and spam message data from")
     st.subheader("https://archive.ics.uci.edu/ml/datasets/sms+spam+collection")
 
@@ -59,19 +59,19 @@ elif choice == 'Data Exploration':
 
     if menu == 'Ham / Spam Word Freq by Size':
         st.header('Ham Word Frequency')
-        st.image('Visualizations\ham freq - size.png')
+        st.image('/Visualizations/ham freq - size.png')
         st.header('Spam Word Frequency')
-        st.image('Visualizations\spam freq - size.png')
+        st.image('/Visualizations/spam freq - size.png')
 
     elif menu == 'Proportion of Ham vs Spam':
         st.header('Pie Chart: Ham vs. Spam')
-        st.image('Visualizations\pie chart.png')
+        st.image('/Visualizations/pie chart.png')
         st.header('Bar Chart: Ham vs Spam')
-        st.image('Visualizations\histgram.png')
+        st.image('/Visualizations/histgram.png')
 
     else:
         st.header('Ham vs. Spam Message length')
-        st.image('Visualizations\ham spam msg len.png')
+        st.image('/Visualizations/ham spam msg len.png')
 
 else:
     st.title("Model Evaluations")
