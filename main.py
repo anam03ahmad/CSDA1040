@@ -1,6 +1,8 @@
-from SpamOrHamModel import st, msg_todisplay, getBowTransformer, getTFIDF, predict_spam_ham
+from SpamOrHamModel import st, predict_spam_ham, get_model_eval
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-menu = ["Home", "Data Exploration", "Prediction: Spam or Ham"]
+menu = ["Home", "Data Exploration", "Prediction: Spam or Ham", "Model Evaluations"]
 choice = st.sidebar.selectbox('Navigation', menu)
 st.sidebar.markdown("Please use drop down to navigate to different pages")
 
@@ -50,7 +52,7 @@ elif choice == 'Prediction: Spam or Ham':
                 st.image('.\warning.png', caption=None, width=None, use_column_width=None, clamp=False, channels="RGB",
                          output_format="auto")
 
-else:
+elif choice == 'Data Exploration':
     st.title("Data Exploration")
     menu_list = ['Ham / Spam Word Freq by Size', 'Proportion of Ham vs Spam', 'Message length by Ham vs Spam']
     menu = st.radio("Menu", menu_list)
@@ -70,3 +72,11 @@ else:
     else:
         st.header('Ham vs. Spam Message length')
         st.image('.\Visualizations\ham spam msg len.png')
+
+else:
+    st.title("Model Evaluations")
+    menu_list = ['SVC', 'Naive Bayes', 'KNN', 'Decision Tree', 'Logistic Regression', 'Random Forest']
+    algorithm = st.selectbox("Algorithms", menu_list)
+
+    classification_report = get_model_eval(algorithm)
+    st.write(classification_report)

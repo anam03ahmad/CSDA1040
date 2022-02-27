@@ -10,6 +10,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report
 
 message_list = pickle.load(open('.\message_list.pkl', 'rb'))
 spamlabel_list = pickle.load(open('.\spamlabel_list.pkl', 'rb'))
@@ -83,15 +84,36 @@ def training(train, alogrithm, label_results):
     return model
 
 
+def eval(actual, all_predictions):
+    cm = classification_report(actual, all_predictions, output_dict=True)
+    return pd.DataFrame(cm).transpose()
+
+
 # get the model that uses the message data
 def get_model(vectorized_train_data, algorithm):
 
     msg_train, msg_test, label_train, label_test = train_test_split(vectorized_train_data, msg_todisplay['spam_label'],
                                                                     test_size=0.25)
-
     spam_detect_model = training(msg_train, algorithm, label_train)
 
     return spam_detect_model
+
+
+# get the model that uses the message data
+def get_model_eval(algorithm):
+    test_bow_transformer = getBowTransformer(msg_todisplay['message'])
+    test_messages_bow = test_bow_transformer.transform(msg_todisplay['message'])
+    test_messages_tfidf = getTFIDF(test_messages_bow)
+
+    msg_train, msg_test, label_train, label_test = train_test_split(test_messages_tfidf, msg_todisplay['spam_label'],
+                                                                    test_size=0.25)
+
+    spam_detect_model = training(msg_train, algorithm, label_train)
+
+    predictions = spam_detect_model.predict(msg_test)
+
+    evaluation = eval(label_test, predictions)
+    return evaluation
 
 
 # predict if a message is ham or spam
