@@ -3,8 +3,8 @@ import pickle
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-message_list = pickle.load(open('message_list.pkl', 'rb'))
-spamlabel_list = pickle.load(open('spamlabel_list.pkl', 'rb'))
+message_list = pickle.load(open('.\message_list.pkl', 'rb'))
+spamlabel_list = pickle.load(open('.\spamlabel_list.pkl', 'rb'))
 msg_todisplay=pd.DataFrame(list(zip(message_list,spamlabel_list)),columns=['message','spam_label'])
 #Count vectorizer for bag of words
 
