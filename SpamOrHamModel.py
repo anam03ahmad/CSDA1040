@@ -12,8 +12,8 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import classification_report
 
-message_list = pickle.load(open('.\message_list.pkl', 'rb'))
-spamlabel_list = pickle.load(open('.\spamlabel_list.pkl', 'rb'))
+message_list = pickle.load(open('message_list.pkl', 'rb'))
+spamlabel_list = pickle.load(open('spamlabel_list.pkl', 'rb'))
 msg_todisplay = pd.DataFrame(list(zip(message_list, spamlabel_list)), columns=['message', 'spam_label'])
 
 

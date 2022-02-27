@@ -41,7 +41,7 @@ elif choice == 'Prediction: Spam or Ham':
                 st.markdown('### Ham! Looks like the message is good!')
 
             with col2:
-                st.image('.\safe.png', caption=None, width=None, use_column_width=None, clamp=False, channels="RGB",
+                st.image('safe.png', caption=None, width=None, use_column_width=None, clamp=False, channels="RGB",
                          output_format="auto")
         else:
 
@@ -49,7 +49,7 @@ elif choice == 'Prediction: Spam or Ham':
                 st.markdown('### Spam! Looks like spam. Be careful!')
 
             with col2:
-                st.image('.\warning.png', caption=None, width=None, use_column_width=None, clamp=False, channels="RGB",
+                st.image('warning.png', caption=None, width=None, use_column_width=None, clamp=False, channels="RGB",
                          output_format="auto")
 
 elif choice == 'Data Exploration':
@@ -59,19 +59,19 @@ elif choice == 'Data Exploration':
 
     if menu == 'Ham / Spam Word Freq by Size':
         st.header('Ham Word Frequency')
-        st.image('.\Visualizations\ham freq - size.png')
+        st.image('Visualizations\ham freq - size.png')
         st.header('Spam Word Frequency')
-        st.image('.\Visualizations\spam freq - size.png')
+        st.image('Visualizations\spam freq - size.png')
 
     elif menu == 'Proportion of Ham vs Spam':
         st.header('Pie Chart: Ham vs. Spam')
-        st.image('.\Visualizations\pie chart.png')
+        st.image('Visualizations\pie chart.png')
         st.header('Bar Chart: Ham vs Spam')
-        st.image('.\Visualizations\histgram.png')
+        st.image('Visualizations\histgram.png')
 
     else:
         st.header('Ham vs. Spam Message length')
-        st.image('.\Visualizations\ham spam msg len.png')
+        st.image('Visualizations\ham spam msg len.png')
 
 else:
     st.title("Model Evaluations")
