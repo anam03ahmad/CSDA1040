@@ -1,67 +1,69 @@
-import streamlit as st
 import pandas as pd
-from lifelines import CoxPHFitter
-from lifelines import WeibullAFTFitter
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import MinMaxScaler
+from xgboost import XGBRegressor
 
-train_data = pd.read_csv('veteran.csv')
+from SchoolHometownGroups import get_hometown_count_group, get_hometown_max_group, get_school_max_group, get_school_count_group
+
+train_df = pd.read_csv('nil_value_data.csv')
+norm_df = pd.read_csv('nil_value_not_normalized.csv')
+
+train_df = train_df[train_df.columns.drop(list(train_df.filter(regex='Position')))]
+train_df = train_df[train_df.columns.drop(list(train_df.filter(regex='Sport')))]
 
 
-def fill_celltype_matrix(df, cell_selected):
-    if cell_selected == 'Large':
-        df.at[0, 'celltype_large'] = 1
-        df.at[0, 'celltype_smallcell'] = 0
-        df.at[0, 'celltype_squamous'] = 0
-    elif cell_selected == 'Smallcell':
-        df.at[0, 'celltype_large'] = 0
-        df.at[0, 'celltype_smallcell'] = 1
-        df.at[0, 'celltype_squamous'] = 0
-    elif cell_selected == 'Squamous':
-        df.at[0, 'celltype_large'] = 0
-        df.at[0, 'celltype_smallcell'] = 0
-        df.at[0, 'celltype_squamous'] = 1
-    else:
-        df.at[0, 'celltype_large'] = 0
-        df.at[0, 'celltype_smallcell'] = 0
-        df.at[0, 'celltype_squamous'] = 0
+def normalize(df):
+
+    to_norm_df = df.append(norm_df, ignore_index=True)
+    scaler = MinMaxScaler()
+    scaled_values = scaler.fit_transform(to_norm_df)
+    to_norm_df.loc[:, :] = scaled_values
+
+    return to_norm_df.head(1)
+
+
+def school_hometown_mapping(df, school_selected, hometown_selected):
+
+    df['School Max Group'] = get_school_max_group(school_selected)
+    df['School Count Group'] = get_school_count_group(school_selected)
+
+    df['Hometown Max Group'] = get_hometown_max_group(hometown_selected)
+    df['Hometown Count Group'] = get_hometown_count_group(hometown_selected)
+
+    df = df.drop(['School', 'Hometown'], axis=1)
     return df
-
-
-# transform the data to all numeric types
-def transform_train_data(df):
-    df_cat = pd.get_dummies(df[['celltype']], drop_first=True)
-    df_transformed = df.join(df_cat)
-    df_transformed = df_transformed.drop(columns=['celltype', 'Unnamed: 0'])
-    return df_transformed
 
 
 def get_model(algorithm):
-    if algorithm == 'Cox Proportional-Hazards Model':
-        spam_detect_model = CoxPHFitter()
+    if algorithm == 'Random Forest Model':
+        nil_prediction_model = RandomForestRegressor()
     else:
-        spam_detect_model = WeibullAFTFitter()
+        nil_prediction_model = XGBRegressor()
 
-    train_df = transform_train_data(train_data)
-    spam_detect_model.fit(train_df, duration_col='time', event_col='status')
+    cols = train_df.columns.tolist()
+    cols.remove('NIL Value')
+    x_cols = cols
 
-    return spam_detect_model
+    nil_prediction_model.fit(train_df[x_cols], train_df['NIL Value'].ravel())
 
-
-# map the treatment type to 0,1, map prior therapy to 0,1
-def clean_trt_prior(df):
-    df.trt = df.trt.map({'Standard' : 0, 'Test' : 1})
-
-    df.prior = df.prior.map({'No': 0, 'Yes': 1})
-    return df
+    return nil_prediction_model
 
 
-def predict_suvival(df, cell_selected, algorithm):
+def predict_nil(df, hometown_selected, school_selected, algorithm):
     # filling in the cell type matrix given selection
-    df = fill_celltype_matrix(df, cell_selected)
 
-    df = clean_trt_prior(df)
+    print('original', df)
+
+    df = school_hometown_mapping(df, school_selected, hometown_selected)
+
+    print('after mapping', df)
+
+    df = normalize(df)
+
+    print('after normalizing', df)
 
     model = get_model(algorithm)
 
-    prediction = model.predict_expectation(df)
+    prediction = model.predict(df)
 
     return prediction
