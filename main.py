@@ -1,110 +1,97 @@
 import pandas as pd
 
-from NILValueModel import st, predict_suvival
+from NilPredModel import st, predict_nil
+from SchoolHometownGroups import get_schools, get_hometowns
 
-menu = ["Home", "Data Exploration", "Prediction: Survival Days"]
+menu = ["Home", "Data Exploration", "Prediction: NIL value"]
 choice = st.sidebar.selectbox('Navigation', menu)
 st.sidebar.markdown("Please use drop down to navigate to different pages")
 
-
 if choice == 'Home':
-    st.title('CSDA 1040 Group 2:')
-    st.title('Survival Prediction Model')
+    st.title('CSDA 1050 Group 2:')
+    st.title('NIL Prediction Model')
     st.header(
-        "In this project, our model predicts how many days a given veteran lung cancer patient will survive." +
-        "Our data is built on a study done for veterans with lung cancer and their survival." +
-        "We are using the veteran lung data from")
-    st.subheader("http://www-eio.upc.edu/~pau/cms/rdata/doc/survival/veteran.html")
+        "This project will use a supervised machine learning approach to create a NIL(Name, Image and Likeness) valuation model to estimate:" +
+        "either 1) the NIL value of a current or future NCAA hockey player" +
+        "or 2) the NIL value based on different features or inputs")
 
-    st.subheader("Lakshmi Sameera Vemula")
-    st.subheader("Cheng Qian")
-    st.subheader("Joey Santiago")
-    st.subheader("Nareshini Dookhy")
+    st.subheader("References:")
+    st.subheader("Nilsson, J., Sibner, P. (2022). Elite Hockey Prospects. https://www.eliteprospects.com/")
+    st.subheader(
+        "NCAA Name, Image and Likeness Data – Athletes with Sponsorships and Endorsements, 2022. https://nilcollegeathletes.com/athletes")
+    st.subheader("World Hockey Hub – World Rankings, 2022. https://worldhockeyhub.com/world-rankings/")
+    st.subheader("NCAA – Men’s Ice Hockey Division 1, 2022. https://www.ncaa.com/stats/icehockey-men/d1")
+
     st.subheader("Fatima Anam Ahmad")
+    st.subheader("Dnyanesh Bailoor")
+    st.subheader("Nareshini Dookhy")
+    st.subheader("Joey Santiago")
+    st.subheader("Cheng Qian")
 
 
 
-elif choice == 'Prediction: Survival Days':
+elif choice == 'Prediction: NIL Value':
 
-    st.title('Survival Days Prediction for Lung Cancer')
+    st.title('NIL Value Prediction for Hockey Player')
 
-    algorithm_selected=st.selectbox("Select an algorithm:", ['Cox Proportional-Hazards Model', 'Weibull Accelerated Failure Time Model'])
+    algorithm_selected = st.selectbox("Select an algorithm:",
+                                      ['Extreme Gradient Boost Regressor Model', 'Random Forest Model'])
 
-    #description
-    st.write("The survival days is predicted based on the following attributes of a patient:" +
-             "  \n  \t  1. Treatment - Standard or Test" +
-             "  \n  \t  2. Cancer Cell Type - Squamous, Smallcell, Adeno, Large" +
-             "  \n  \t  3. Karnofsky Performance Score (100=good)" +
-             "  \n  \t  4. Diagnosis Time - Months from Diagnosis to Randomisation" +
-             "  \n  \t  5. Age" +
-             "  \n  \t  6. If they've had Prior Therapy")
+    # description
+    st.write("The NIL value is predicted based on the following features:" +
+             "  \n  \t  1. Weight in KG" +
+             "  \n  \t  2. Height in Inch" +
+             "  \n  \t  3. Followers Instagram" +
+             "  \n  \t  4. Followers Tiktok" +
+             "  \n  \t  5. Followers Twitter" +
+             "  \n  \t  6. School" +
+             "  \n  \t  7. Hometown")
 
-    #inputs
-    trt_selected = st.selectbox( 'Treatment Type', ('Standard', 'Test'))
-    cell_selected = st.selectbox('Cancer Cell Type', ('Squamous', 'Smallcell', 'Adeno', 'Large'))
-    karno_selected = st.number_input('Karnofsky Score', min_value=1, max_value=100, value=50, step=1)
-    diag_selected = st.number_input('Diagnosis Time', min_value=1, max_value=100, value=50, step=1)
-    age_selected = st.number_input('Age', min_value=30, max_value=100, value=65, step=1)
-    prior_selected = st.selectbox('Prior Therapy', ('Yes', 'No'))
+    # inputs
+    weight_selected = st.number_input('Weight in KG:', min_value=30, max_value=500, value=50, step=1)
+    height_selected = st.number_input('Height in Inch:', min_value=30, max_value=200, value=30, step=1)
+    f_instagram_selected = st.number_input('Followers Instagram:')
+    f_tiktok_selected = st.number_input('Followers Tiktok:')
+    f_twitter_selected = st.number_input('Followers Twitter:')
+    school_selected = st.selectbox('School', get_schools)
+    hometown_selected = st.selectbox('Hometown', get_hometowns)
 
-    if st.button('Predict Survival Days'):
-        st.write('Treatment: ', trt_selected, 'Cell: ', cell_selected, 'Karno: ', karno_selected,
-                 'Diagnosis Time: ', diag_selected, 'Age: ', age_selected, 'Prior Therapy: ', prior_selected)
-        st.write("Your algorithm: ", algorithm_selected)
-
-        #create df with all inputs
-        patient_df = pd.DataFrame({
-            'trt': [trt_selected],
-            'karno': [karno_selected],
-            'diagtime': [diag_selected],
-            'age': [age_selected],
-            'prior': [prior_selected],
-            'celltype_large': [0],
-            'celltype_smallcell': [0],
-            'celltype_squamous': [0]
+    if st.button('Predict NIL value'):
+        # create df with all inputs
+        player_df = pd.DataFrame({
+            'Height_in_Inches': [height_selected],
+            'Weight_in_Kg': [weight_selected],
+            'Followers Instagram': [f_instagram_selected],
+            'Followers Tiktok': [f_tiktok_selected],
+            'Followers Twitter': [f_twitter_selected],
+            'School': [school_selected],
+            'Hometown': [hometown_selected]
         })
 
-        prediction = predict_suvival(patient_df, cell_selected,algorithm_selected)
+        prediction = predict_nil(player_df, algorithm_selected)
 
+       #what's this?
         col1, col2 = st.columns([8, 6])
 
-        st.write('The patient is predicted to survive ', round(prediction.at[0]), ' days')
+        st.write('The Predicted NIL Value: ', round(prediction.at[0]))
 
 else:
     st.title("Data Exploration")
-    menu_list = ['Observed Deaths vs Censored', 'Feature Density', 'Suvival Function',
-                 'Survival By Treatment', 'Survival By Cell Type']
+    menu_list = ['Height vs NIL', 'Weight vs NIL', 'Followers Instagram vs NIL',
+                 'Followers Tiktok vs NIL', 'Followers Twitter vs NIL']
     menu = st.radio("Menu", menu_list)
 
-    if menu == 'Observed Deaths vs Censored':
-        st.header('Observed Deaths (1) vs Alive (0) at the end of Study')
-        st.write('The majority of samples are not censored so prediction should not be hindered.')
-        st.image('Visualizations/dead-v-alive.png')
+    if menu == 'Height vs NIL':
+        st.image('Visualizations/Height_vs_NIL.png')
 
-    elif menu == 'Feature Density':
-        st.header('Age')
-        st.image('Visualizations/feat-age.png')
-        st.header('Cell Type')
-        st.image('Visualizations/feat-celltype.png')
-        st.header('Diagnosis Time')
-        st.image('Visualizations/feat-diagtime.png')
-        st.header('Prior Therapy')
-        st.image('Visualizations/feat-prior.png')
-        st.header('Treatment')
-        st.image('Visualizations/feat-trt.png')
+    elif menu == 'Weight vs NIL':
+        st.image('Visualizations/Weight_vs_NIL.png')
 
-    elif menu == 'Survival By Treatment':
-        st.header('Survival Function By Treatment (Kaplan Meier)')
-        st.write('There is not a pronounced difference in the standard survival curve vs test survival curve. ' +
-                 'We cannot conclude that either has better survival chances than the other.')
-        st.image('Visualizations/survival-by-trt.png')
+    elif menu == 'Followers Instagram vs NIL':
+        st.image('Visualizations/InstagramF_vs_NIL.png')
 
-    elif menu == 'Suvival Function':
-        st.header('Overall Survival Function (Kaplan Meier)')
-        st.image('Visualizations/survival-fn.png')
+    elif menu == 'Followers Tiktok vs NIL':
+        st.image('Visualizations/TiktokF_vs_NIL.png')
 
-    else:
-        st.header('Survival Function By Cancer Cell Type (Kaplan Meier)')
-        st.write('There is a noticeable difference between two groups. Patients with squamous or large cells ' +
-                 'seem to have a better prognosis compared to patients with small or adeno cells.')
-        st.image('Visualizations/survival-by-cell.png')
+    elif menu == 'Followers Twitter vs NIL':
+        st.image('Visualizations/Twitter_vs_NIL.png')
