@@ -49,7 +49,7 @@ elif choice == 'Prediction: NIL value':
              "  \n  \t  7. Hometown")
 
     # inputs
-    weight_selected = st.number_input('Weight in KG:', min_value=30, max_value=500, value=50, step=1)
+    weight_selected = st.number_input('Weight in LBS:', min_value=30, max_value=500, value=50, step=1)
     height_selected = st.number_input('Height in Inch:', min_value=30, max_value=200, value=30, step=1)
     f_instagram_selected = st.number_input('Followers Instagram:', min_value=0, max_value=10000000, value=2000, step=1)
     f_tiktok_selected = st.number_input('Followers Tiktok:', min_value=0, max_value=10000000, value=0, step=1)
