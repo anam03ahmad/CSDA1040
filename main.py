@@ -1,6 +1,6 @@
 import pandas as pd
 
-from SurvivalModel import st, predict_suvival
+from NILValueModel import st, predict_suvival
 
 menu = ["Home", "Data Exploration", "Prediction: Survival Days"]
 choice = st.sidebar.selectbox('Navigation', menu)
