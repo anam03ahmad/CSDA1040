@@ -61,7 +61,7 @@ elif choice == 'Prediction: NIL value':
         # create df with all inputs
         player_df = pd.DataFrame({
             'Height_in_Inches': [height_selected],
-            'Weight_in_Lbs': [weight_selected],
+            'Weight_in_Kg': [weight_selected],
             'Followers Instagram': [f_instagram_selected],
             'Followers Tiktok': [f_tiktok_selected],
             'Followers Twitter': [f_twitter_selected],
