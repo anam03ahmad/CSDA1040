@@ -1,82 +1,95 @@
-from SpamOrHamModel import st, predict_spam_ham, get_model_eval
-import seaborn as sns
-import matplotlib.pyplot as plt
+import pandas as pd
+import streamlit as st
 
-menu = ["Home", "Data Exploration", "Prediction: Spam or Ham", "Model Evaluations"]
+from NILValueModel import predict_nil
+from SchoolHometownGroups import get_schools, get_hometowns
+
+menu = ["Home", "Data Exploration", "Prediction: NIL value"]
 choice = st.sidebar.selectbox('Navigation', menu)
 st.sidebar.markdown("Please use drop down to navigate to different pages")
 
 if choice == 'Home':
-    st.title('CSDA 1040 Group 2:')
-    st.title('Spam Detection Model')
-    st.header(
-        "In this project, our model determines if an sms is spam or not. We are using Natual Language Processing and the Multinomial Naive Bayes algorithm." +
-        "We used the ham and spam message data from")
-    st.subheader("https://archive.ics.uci.edu/ml/datasets/sms+spam+collection")
+    st.title('CSDA 1050 Group 2:')
+    st.title('NIL Prediction Model')
+    st.subheader(
+        "This project will use a supervised machine learning approach to create a NIL(Name, Image and Likeness) valuation model to estimate:" +
+        "either 1) the NIL value of a current or future NCAA hockey player" +
+        "or 2) the NIL value based on different features or inputs")
 
-    st.subheader("Lakshmi Sameera Vemula")
-    st.subheader("Cheng Qian")
-    st.subheader("Joey Santiago")
-    st.subheader("Nareshini Dookhy")
+    st.subheader("References:")
+    st.subheader("Nilsson, J., Sibner, P. (2022). Elite Hockey Prospects. https://www.eliteprospects.com/")
+    st.subheader(
+        "NCAA Name, Image and Likeness Data – Athletes with Sponsorships and Endorsements, 2022. https://nilcollegeathletes.com/athletes")
+    st.subheader("World Hockey Hub – World Rankings, 2022. https://worldhockeyhub.com/world-rankings/")
+    st.subheader("NCAA – Men’s Ice Hockey Division 1, 2022. https://www.ncaa.com/stats/icehockey-men/d1")
+
     st.subheader("Fatima Anam Ahmad")
+    st.subheader("Dnyanesh Bailoor")
+    st.subheader("Nareshini Dookhy")
+    st.subheader("Joey Santiago")
+    st.subheader("Cheng Qian")
 
 
 
-elif choice == 'Prediction: Spam or Ham':
+elif choice == 'Prediction: NIL value':
 
-    st.title('Verifying SMS is spam or not')
+    st.title('NIL Value Prediction for Hockey Player')
 
-    message_selected = st.text_input("Please enter a message:")
-    algorithm_selected=st.selectbox("Select an algorithm:", ['SVC', 'Naive Bayes', 'KNN', 'Decision Tree', 'Logistic Regression', 'Random Forest'])
+    algorithm_selected = st.selectbox("Select an algorithm:",
+                                      ['Extreme Gradient Boost Regressor Model', 'Random Forest Model'])
 
-    if st.button('Ham or Spam?'):
-        st.write("Your message: ", message_selected)
-        st.write("Your algorithm: ", algorithm_selected)
-        prediction = predict_spam_ham([message_selected], algorithm_selected)
+    # description
+    st.write("The NIL value is predicted based on the following features:" +
+             "  \n  \t  1. Weight in LBS" +
+             "  \n  \t  2. Height in Inch" +
+             "  \n  \t  3. Followers Instagram" +
+             "  \n  \t  4. Followers Tiktok" +
+             "  \n  \t  5. Followers Twitter" +
+             "  \n  \t  6. School" +
+             "  \n  \t  7. Hometown")
 
-        col1, col2 = st.columns([8, 6])
+    # inputs
+    weight_selected = st.number_input('Weight in LBS:', min_value=30, max_value=500, value=50, step=1)
+    height_selected = st.number_input('Height in Inch:', min_value=30, max_value=200, value=30, step=1)
+    f_instagram_selected = st.number_input('Followers Instagram:', min_value=0, max_value=10000000, value=2000, step=1)
+    f_tiktok_selected = st.number_input('Followers Tiktok:', min_value=0, max_value=10000000, value=0, step=1)
+    f_twitter_selected = st.number_input('Followers Twitter:', min_value=0, max_value=10000000, value=0, step=1)
+    school_selected = st.selectbox('School', get_schools())
+    hometown_selected = st.selectbox('Hometown', get_hometowns())
 
-        if (prediction.flat[0] == 'ham'):
-            with col1:
-                st.markdown('### Ham! Looks like the message is good!')
+    if st.button('Predict NIL value'):
+        # create df with all inputs
+        player_df = pd.DataFrame({
+            'Height_in_Inches': [height_selected],
+            'Weight_in_Kg': [weight_selected],
+            'Followers Instagram': [f_instagram_selected],
+            'Followers Tiktok': [f_tiktok_selected],
+            'Followers Twitter': [f_twitter_selected],
+            'School': [school_selected],
+            'Hometown': [hometown_selected]
+        })
 
-            with col2:
-                st.image('safe.png', caption=None, width=None, use_column_width=None, clamp=False, channels="RGB",
-                         output_format="auto")
-        else:
+        prediction = predict_nil(player_df, hometown_selected, school_selected, algorithm_selected)
 
-            with col1:
-                st.markdown('### Spam! Looks like spam. Be careful!')
-
-            with col2:
-                st.image('warning.png', caption=None, width=None, use_column_width=None, clamp=False, channels="RGB",
-                         output_format="auto")
-
-elif choice == 'Data Exploration':
-    st.title("Data Exploration")
-    menu_list = ['Ham / Spam Word Freq by Size', 'Proportion of Ham vs Spam', 'Message length by Ham vs Spam']
-    menu = st.radio("Menu", menu_list)
-
-    if menu == 'Ham / Spam Word Freq by Size':
-        st.header('Ham Word Frequency')
-        st.image('Visualizations/ham freq - size.png')
-        st.header('Spam Word Frequency')
-        st.image('Visualizations/spam freq - size.png')
-
-    elif menu == 'Proportion of Ham vs Spam':
-        st.header('Pie Chart: Ham vs. Spam')
-        st.image('Visualizations/pie chart.png')
-        st.header('Bar Chart: Ham vs Spam')
-        st.image('Visualizations/histgram.png')
-
-    else:
-        st.header('Ham vs. Spam Message length')
-        st.image('Visualizations/ham spam msg len.png')
+        st.write('The Predicted NIL Value: ', '{:,}'.format(prediction.flat[0]))
 
 else:
-    st.title("Model Evaluations")
-    menu_list = ['SVC', 'Naive Bayes', 'KNN', 'Decision Tree', 'Logistic Regression', 'Random Forest']
-    algorithm = st.selectbox("Algorithms", menu_list)
+    st.title("Data Exploration")
+    menu_list = ['Height vs NIL', 'Weight vs NIL', 'Followers Instagram vs NIL',
+                 'Followers Tiktok vs NIL', 'Followers Twitter vs NIL']
+    menu = st.radio("Menu", menu_list)
 
-    classification_report = get_model_eval(algorithm)
-    st.write(classification_report)
+    if menu == 'Height vs NIL':
+        st.image('Visualizations/Height_vs_NIL.png')
+
+    elif menu == 'Weight vs NIL':
+        st.image('Visualizations/Weight_vs_NIL.png')
+
+    elif menu == 'Followers Instagram vs NIL':
+        st.image('Visualizations/InstagramF_vs_NIL.png')
+
+    elif menu == 'Followers Tiktok vs NIL':
+        st.image('Visualizations/TiktokF_vs_NIL.png')
+
+    elif menu == 'Followers Twitter vs NIL':
+        st.image('Visualizations/TwitterF_vs_NIL.png')
