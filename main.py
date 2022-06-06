@@ -1,95 +1,102 @@
 import pandas as pd
 import streamlit as st
 
-from NILValueModel import predict_nil
-from SchoolHometownGroups import get_schools, get_hometowns
+from GetData import get_random_comment
 
-menu = ["Home", "Data Exploration", "Prediction: NIL value"]
+from textblob import TextBlob
+
+menu = ["Home", "Data Trends", "Comment Analysis Model"]
 choice = st.sidebar.selectbox('Navigation', menu)
 st.sidebar.markdown("Please use drop down to navigate to different pages")
 
+
+def display_output(message_selected):
+    sentiment = TextBlob(message_selected).sentiment.polarity
+    if sentiment > 0:
+        img = 'Images/happy.png'
+        msg = 'This comment is positive.'
+
+    elif sentiment < 0:
+        img = 'Images/angry.png'
+        msg = 'This comment is negative.'
+
+    else:
+        img = 'Images/neutral.png'
+        msg = 'This comment is neutral.'
+
+    col1, col2, col3 = st.columns([1, 6, 1])
+
+    with col1:
+        st.image(img)
+
+    with col2:
+        st.write(msg)
+
 if choice == 'Home':
-    st.title('CSDA 1050 Group 2:')
-    st.title('NIL Prediction Model')
+    st.title('Data Scientist (Research & Insights) – R-1003740')
+    st.subheader('Anam Ahmad:')
+    st.subheader('NLP Demo App')
     st.subheader(
-        "This project will use a supervised machine learning approach to create a NIL(Name, Image and Likeness) valuation model to estimate:" +
-        "either 1) the NIL value of a current or future NCAA hockey player" +
-        "or 2) the NIL value based on different features or inputs")
+        "This is a demo app designed to illustrate how machine learning can analyze sentiments of open-ended comments"
+        + " using NLP and provide different visualizations of structured and comment data. I have developed this"
+        + " with open source data. For the comments, I have taken data of various Youtube comments and focused on the"
+        + " English ones. For the data visualizations, I have chosen to use the Youtube data for the word analysis, and"
+        + " a 2013 US census data.")
 
     st.subheader("References:")
-    st.subheader("Nilsson, J., Sibner, P. (2022). Elite Hockey Prospects. https://www.eliteprospects.com/")
-    st.subheader(
-        "NCAA Name, Image and Likeness Data – Athletes with Sponsorships and Endorsements, 2022. https://nilcollegeathletes.com/athletes")
-    st.subheader("World Hockey Hub – World Rankings, 2022. https://worldhockeyhub.com/world-rankings/")
-    st.subheader("NCAA – Men’s Ice Hockey Division 1, 2022. https://www.ncaa.com/stats/icehockey-men/d1")
+    st.subheader("Github. Jolly, Mitchell. Trending-Youtube-Scraper (2018). https://github.com/mitchelljy/Trending-YouTube-Scraper")
+    st.subheader("American Community Survey (2022). https://www2.census.gov/programs-surveys/acs/data/pums/2013/1-Year/")
 
     st.subheader("Fatima Anam Ahmad")
-    st.subheader("Dnyanesh Bailoor")
-    st.subheader("Nareshini Dookhy")
-    st.subheader("Joey Santiago")
-    st.subheader("Cheng Qian")
+    st.subheader("All rights reserved.")
 
 
 
-elif choice == 'Prediction: NIL value':
+elif choice == 'Comment Analysis Model':
 
-    st.title('NIL Value Prediction for Hockey Player')
-
-    algorithm_selected = st.selectbox("Select an algorithm:",
-                                      ['Extreme Gradient Boost Regressor Model', 'Random Forest Model'])
+    st.title('Sentiment Analysis for Comments')
 
     # description
-    st.write("The NIL value is predicted based on the following features:" +
-             "  \n  \t  1. Weight in LBS" +
-             "  \n  \t  2. Height in Inch" +
-             "  \n  \t  3. Followers Instagram" +
-             "  \n  \t  4. Followers Tiktok" +
-             "  \n  \t  5. Followers Twitter" +
-             "  \n  \t  6. School" +
-             "  \n  \t  7. Hometown")
+    st.write("Try out with a comment! Enter your own comment or press 'random' to generate a random comment.")
+
 
     # inputs
-    weight_selected = st.number_input('Weight in LBS:', min_value=30, max_value=500, value=50, step=1)
-    height_selected = st.number_input('Height in Inch:', min_value=30, max_value=200, value=30, step=1)
-    f_instagram_selected = st.number_input('Followers Instagram:', min_value=0, max_value=10000000, value=2000, step=1)
-    f_tiktok_selected = st.number_input('Followers Tiktok:', min_value=0, max_value=10000000, value=0, step=1)
-    f_twitter_selected = st.number_input('Followers Twitter:', min_value=0, max_value=10000000, value=0, step=1)
-    school_selected = st.selectbox('School', get_schools())
-    hometown_selected = st.selectbox('Hometown', get_hometowns())
+    message_selected = st.text_input("Please enter a comment:")
 
-    if st.button('Predict NIL value'):
-        # create df with all inputs
-        player_df = pd.DataFrame({
-            'Height_in_Inches': [height_selected],
-            'Weight_in_Kg': [weight_selected],
-            'Followers Instagram': [f_instagram_selected],
-            'Followers Tiktok': [f_tiktok_selected],
-            'Followers Twitter': [f_twitter_selected],
-            'School': [school_selected],
-            'Hometown': [hometown_selected]
-        })
+    if st.button('Random Comment'):
 
-        prediction = predict_nil(player_df, hometown_selected, school_selected, algorithm_selected)
+        message_selected = get_random_comment()
+        st.write(message_selected)
 
-        st.write('The Predicted NIL Value: ', '{:,}'.format(prediction.flat[0]))
+        display_output(message_selected)
+
+    if st.button('Analyse Sentiment'):
+
+        st.write('Comment:\n' + message_selected)
+        display_output(message_selected)
+
 
 else:
-    st.title("Data Exploration")
-    menu_list = ['Height vs NIL', 'Weight vs NIL', 'Followers Instagram vs NIL',
+    st.title("Data Trends")
+    menu_list = ['Word Analysis At a Glance', 'Avg Internet Access By State', 'FoodStamp Average By State',
                  'Followers Tiktok vs NIL', 'Followers Twitter vs NIL']
     menu = st.radio("Menu", menu_list)
 
-    if menu == 'Height vs NIL':
-        st.image('Visualizations/Height_vs_NIL.png')
+    if menu == 'Word Analysis At a Glance':
+        st.image('Visualizations/wordcloud.png')
+        st.text('Key words from the Yt data are analyzed and the sized displayed according to their occurence. From a '
+                'glance, we can see that "Love" is one of the most used words and there aren\'t any negative words '
+                'that show up which implies that a large number of the comments are positive.')
 
-    elif menu == 'Weight vs NIL':
-        st.image('Visualizations/Weight_vs_NIL.png')
+    elif menu == 'FoodStamp Average By State':
+        st.image('Visualizations/wordcloud.png')
+        st.text('Key words from the Yt data are analyzed and the sized displayed according to their occurence. From a '
+                'glance, we can see that "Love" is one of the most used words and there aren\'t any negative words '
+                'that show up which implies that a large number of the comments are positive.')
 
-    elif menu == 'Followers Instagram vs NIL':
-        st.image('Visualizations/InstagramF_vs_NIL.png')
 
-    elif menu == 'Followers Tiktok vs NIL':
-        st.image('Visualizations/TiktokF_vs_NIL.png')
-
-    elif menu == 'Followers Twitter vs NIL':
-        st.image('Visualizations/TwitterF_vs_NIL.png')
+    if menu == 'Avg Internet Access By State':
+        st.image('Visualizations/wordcloud.png')
+        st.text('Key words from the Yt data are analyzed and the sized displayed according to their occurence. From a '
+                'glance, we can see that "Love" is one of the most used words and there aren\'t any negative words '
+                'that show up which implies that a large number of the comments are positive.')
