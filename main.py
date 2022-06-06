@@ -32,6 +32,7 @@ def display_output(message_selected):
     with col2:
         st.write(msg)
 
+
 if choice == 'Home':
     st.title('Data Scientist (Research & Insights) – R-1003740')
     st.subheader('Anam Ahmad:')
@@ -44,8 +45,10 @@ if choice == 'Home':
         + " a 2013 US census data.")
 
     st.subheader("References:")
-    st.subheader("Github. Jolly, Mitchell. Trending-Youtube-Scraper (2018). https://github.com/mitchelljy/Trending-YouTube-Scraper")
-    st.subheader("American Community Survey (2022). https://www2.census.gov/programs-surveys/acs/data/pums/2013/1-Year/")
+    st.subheader(
+        "Github. Jolly, Mitchell. Trending-Youtube-Scraper (2018). https://github.com/mitchelljy/Trending-YouTube-Scraper")
+    st.subheader(
+        "American Community Survey (2022). https://www2.census.gov/programs-surveys/acs/data/pums/2013/1-Year/")
 
     st.subheader("Fatima Anam Ahmad")
     st.subheader("All rights reserved.")
@@ -59,19 +62,16 @@ elif choice == 'Comment Analysis Model':
     # description
     st.write("Try out with a comment! Enter your own comment or press 'random' to generate a random comment.")
 
-
     # inputs
     message_selected = st.text_input("Please enter a comment:")
 
     if st.button('Random Comment'):
-
         message_selected = get_random_comment()
         st.write(message_selected)
 
         display_output(message_selected)
 
     if st.button('Analyse Sentiment'):
-
         st.write('Comment:\n' + message_selected)
         display_output(message_selected)
 
@@ -79,24 +79,31 @@ elif choice == 'Comment Analysis Model':
 else:
     st.title("Data Trends")
     menu_list = ['Word Analysis At a Glance', 'Avg Internet Access By State', 'FoodStamp Average By State',
-                 'Followers Tiktok vs NIL', 'Followers Twitter vs NIL']
+                 'Income By State', 'Income By Age and Nativity']
     menu = st.radio("Menu", menu_list)
 
     if menu == 'Word Analysis At a Glance':
         st.image('Visualizations/wordcloud.png')
-        st.text('Key words from the Yt data are analyzed and the sized displayed according to their occurence. From a '
+        st.caption('Key words from the Yt data are analyzed and the sized displayed according to their occurence. From a '
                 'glance, we can see that "Love" is one of the most used words and there aren\'t any negative words '
                 'that show up which implies that a large number of the comments are positive.')
 
     elif menu == 'FoodStamp Average By State':
-        st.image('Visualizations/wordcloud.png')
-        st.text('Key words from the Yt data are analyzed and the sized displayed according to their occurence. From a '
-                'glance, we can see that "Love" is one of the most used words and there aren\'t any negative words '
-                'that show up which implies that a large number of the comments are positive.')
+        st.image('Visualizations/fs_avg.png')
+        st.caption('Food Stamps by State. 1 refers to none of the populaion is on Food Stamps, and 2 refers to the '
+                'entire population on Food Stamp. When a state is closer to 1, the less of the population is on Food '
+                'Stamps. In contrast, the closer to 2, the more the more its population is on Food Stamps.')
 
+    elif menu == 'Avg Internet Access By State':
+        st.image('Visualizations/access_avg.png')
+        st.caption('Internet Access by State. ')
 
-    if menu == 'Avg Internet Access By State':
-        st.image('Visualizations/wordcloud.png')
-        st.text('Key words from the Yt data are analyzed and the sized displayed according to their occurence. From a '
-                'glance, we can see that "Love" is one of the most used words and there aren\'t any negative words '
-                'that show up which implies that a large number of the comments are positive.')
+    elif menu == 'Income By State':
+        st.image('Visualizations/income_med.png')
+        st.caption("The states are organized by their median family income from most to least. The income is divided by "
+                "10000 as to standardize the values.")
+
+    else:
+        st.image('Visualizations/inc_age_nat.png')
+        st.caption("This is tne family income of individuals by age for both Native born (blue) and Foreign born (orange).")
+
