@@ -3,7 +3,8 @@ import streamlit as st
 
 from GetData import get_random_comment
 
-from textblob import TextBlob
+from flair.models import TextClassifier
+from flair.data import Sentence
 
 menu = ["Home", "Data Trends", "Comment Analysis Model"]
 choice = st.sidebar.selectbox('Navigation', menu)
@@ -11,12 +12,17 @@ st.sidebar.markdown("Please use drop down to navigate to different pages")
 
 
 def display_output(message_selected):
-    sentiment = TextBlob(message_selected).sentiment.polarity
-    if sentiment > 0:
+    sia = TextClassifier.load('en-sentiment')
+
+    sentence = Sentence(message_selected)
+    sia.predict(sentence)
+    score = sentence.labels[0]
+
+    if "POSITIVE" in str(score):
         img = 'Images/happy.png'
         msg = 'This comment is positive.'
 
-    elif sentiment < 0:
+    elif "NEGATIVE" in str(score):
         img = 'Images/angry.png'
         msg = 'This comment is negative.'
 
