@@ -44,7 +44,8 @@ def transform_train_test(msg):
     ser_new_msg = pd.Series(msg)
     print("shape new msg: ", ser_new_msg.shape)
 
-    ser_msg = ser_msg.append(ser_new_msg)
+    #ser_msg = ser_msg.append(ser_new_msg)
+    ser_msg = pd.concat([ser_msg, ser_new_msg], ignore_index=True)
     print("Initial shape: ", ser_msg.shape)
 
     train_bow_transformer = getBowTransformer(ser_msg)
