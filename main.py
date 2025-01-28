@@ -14,10 +14,7 @@ if choice == 'Home':
         "We used the ham and spam message data from")
     st.subheader("https://archive.ics.uci.edu/ml/datasets/sms+spam+collection")
 
-    st.subheader("Lakshmi Sameera Vemula")
-    st.subheader("Cheng Qian")
-    st.subheader("Joey Santiago")
-    st.subheader("Nareshini Dookhy")
+    st.subheader("Created BY:")
     st.subheader("Fatima Anam Ahmad")
 
 
