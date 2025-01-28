@@ -10,8 +10,8 @@ if choice == 'Home':
     st.title('CSDA 1040 Group 2:')
     st.title('Spam Detection Model')
     st.header(
-        "In this project, our model determines if an sms is spam or not. We are using Natual Language Processing and the Multinomial Naive Bayes algorithm." +
-        "We used the ham and spam message data from")
+        "In this project, my models determine if an sms is spam or not. I am using Natual Language Processing and the Multinomial Naive Bayes algorithm." +
+        "I used the ham and spam message data from")
     st.subheader("https://archive.ics.uci.edu/ml/datasets/sms+spam+collection")
 
     st.subheader("Created BY:")
