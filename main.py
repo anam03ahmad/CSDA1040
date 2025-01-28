@@ -7,7 +7,7 @@ choice = st.sidebar.selectbox('Navigation', menu)
 st.sidebar.markdown("Please use drop down to navigate to different pages")
 
 if choice == 'Home':
-    st.title('CSDA 1040 Group 2:')
+    st.title('CSDA 1040 Project:')
     st.title('Spam Detection Model')
     st.header(
         "In this project, my models determine if an sms is spam or not. I am using Natual Language Processing and the Multinomial Naive Bayes algorithm." +
